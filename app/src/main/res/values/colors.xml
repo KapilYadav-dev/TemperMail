@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Normal Theme-->
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorPrimaryDark">#ffffff</color>
+    <color name="colorAccent">#3E7EEA</color>
+    <!--Dark Theme-->
+    <color name="colorDarkBg">#0a0a18</color>
+    <color name="colorDarkAction">#141422</color>
+    <color name="colorDarkText">#3E7EEA</color>
+</resources>
