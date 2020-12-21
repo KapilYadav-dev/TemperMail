@@ -2,10 +2,13 @@ package in.kay.temper.Views;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -18,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import in.kay.temper.Api.RetrofitClient;
 import in.kay.temper.Adapter.MailAdapter;
 import in.kay.temper.Models.MailModel;
+import in.kay.temper.R;
 import in.kay.temper.databinding.ActivityMainBinding;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -143,6 +147,31 @@ public class MainActivity extends AppCompatActivity {
         list.add(0, prefix);
         list.add(1, domain);
         return list;
+    }
+
+    private void ShowDialog() {
+        View view = getLayoutInflater().inflate(R.layout.alert_diag, null);
+        final AlertDialog alertbox = new AlertDialog.Builder(this)
+                .setView(view)
+                .show();
+        Button yes, no;
+        yes = alertbox.findViewById(R.id.btn_yes);
+        no = alertbox.findViewById(R.id.btn_no);
+        yes.setOnClickListener(view1 -> CloseApp());
+        no.setOnClickListener(view12 -> alertbox.dismiss());
+    }
+
+    @Override
+    public void onBackPressed() {
+        ShowDialog();
+    }
+
+    private void CloseApp() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
+        int pid = android.os.Process.myPid();
+        android.os.Process.killProcess(pid);
     }
 
 }

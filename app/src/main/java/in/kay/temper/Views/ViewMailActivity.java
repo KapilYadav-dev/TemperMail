@@ -1,7 +1,9 @@
 package in.kay.temper.Views;
 
+import android.Manifest;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -66,7 +68,12 @@ public class ViewMailActivity extends AppCompatActivity {
                     binding.tvAttachmentName.setText(response.body().getAttachments().get(0).getFilename());
                     binding.tvSize.setText(response.body().getAttachments().get(0).getSize() / 1000 + " Kb");
                     binding.layoutDownload.setOnClickListener(view1 -> {
-                        downloadFile(url, response.body().getAttachments().get(0).getFilename());
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1000);
+                        } else {
+                            downloadFile(url, response.body().getAttachments().get(0).getFilename());
+                        }
                     });
                 }
             }

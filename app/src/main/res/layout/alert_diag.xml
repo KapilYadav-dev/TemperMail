@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="10dp"
+    android:background="#234"
+    android:padding="5dp"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="20dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#fff"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/who_are_you"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/gilroymedium"
+            android:gravity="top"
+            android:text="Do you really want to exit ?"
+            android:textColor="#263238"
+            android:textSize="16dp" />
+
+        <Button
+            android:id="@+id/btn_yes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="48dp"
+            android:textColor="#FFFFFF"
+            android:layout_marginRight="16dp"
+            android:textAllCaps="false"
+            android:background="@drawable/ic_btn_one"
+            android:fontFamily="@font/gilroymedium"
+            android:text="Yes"
+            android:textAlignment="center" />
+
+        <Button
+            android:id="@+id/btn_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="112dp"
+            android:textAllCaps="false"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/ic_active"
+            android:fontFamily="@font/gilroymedium"
+            android:text="No"
+            android:textColor="@color/colorAccent"
+            android:paddingStart="10dp"
+            android:textAlignment="center" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
