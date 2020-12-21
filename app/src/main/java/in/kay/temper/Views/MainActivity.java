@@ -23,6 +23,7 @@ import com.romainpiel.shimmer.Shimmer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import in.kay.temper.Adapter.MailAdapter;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     Disposable disposable;
     private NotificationManagerCompat notificationManager;
     MailAdapter mailAdapter;
-    String prefix = "demo", domain = "1secmail.com";
+    String prefix, domain;
     ArrayList<MailModel> list = new ArrayList<>();
 
     @Override
@@ -53,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+        prefix = generateSessionKey(6);
+        domain = "1secmail.com";
+        binding.tvMailAddress.setText(prefix+"@"+domain);
         notificationManager = NotificationManagerCompat.from(this);
         binding.rv.setLayoutManager(new LinearLayoutManager(this));
         RefreshMailBox();
@@ -200,8 +204,7 @@ public class MainActivity extends AppCompatActivity {
         String title = "New mail received from " + from;
         String message = msg;
         Intent activityIntent = new Intent(this, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this,
-                0, activityIntent, 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, activityIntent, 0);
         Bitmap picture = BitmapFactory.decodeResource(getResources(), R.drawable.noti_img);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_icon)
@@ -221,5 +224,14 @@ public class MainActivity extends AppCompatActivity {
         notificationManager.notify(1, notification);
     }
 
+    public static String generateSessionKey(int length) {
+        String alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        int n = alphabet.length();
+        String result = new String();
+        Random r = new Random();
+        for (int i = 0; i < length; i++)
+            result = result + alphabet.charAt(r.nextInt(n));
+        return result;
+    }
 
 }

@@ -39,7 +39,7 @@ public class ViewMailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_mail);
         binding = ActivityViewMailBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
-        Integer id = getIntent().getIntExtra("id", 1);
+        Integer id = getIntent().getIntExtra("id",  1);
         String prefix = getIntent().getStringExtra("prefix");
         String domain = getIntent().getStringExtra("domain");
         setContentView(view);
