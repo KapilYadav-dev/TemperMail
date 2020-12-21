@@ -1,8 +1,13 @@
 package in.kay.temper.Views;
 
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +15,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.romainpiel.shimmer.Shimmer;
@@ -18,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import in.kay.temper.Api.RetrofitClient;
 import in.kay.temper.Adapter.MailAdapter;
+import in.kay.temper.Api.RetrofitClient;
 import in.kay.temper.Models.MailModel;
 import in.kay.temper.R;
 import in.kay.temper.databinding.ActivityMainBinding;
@@ -30,9 +37,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static in.kay.temper.Helper.App.CHANNEL_1_ID;
+
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     Disposable disposable;
+    private NotificationManagerCompat notificationManager;
     MailAdapter mailAdapter;
     String prefix = "demo", domain = "1secmail.com";
     ArrayList<MailModel> list = new ArrayList<>();
@@ -43,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+        notificationManager = NotificationManagerCompat.from(this);
         binding.rv.setLayoutManager(new LinearLayoutManager(this));
         RefreshMailBox();
         binding.btnCopyMail.setOnClickListener(view1 -> {
@@ -70,8 +81,13 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<ArrayList<MailModel>>() {
             @Override
             public void onResponse(Call<ArrayList<MailModel>> call, Response<ArrayList<MailModel>> response) {
+                if (response.body().size() > list.size() && list.size() > 0) {
+                    String subject = response.body().get(0).getSubject();
+                    String from = response.body().get(0).getFrom();
+                    ShowNotification(subject, from, response.body().get(0).id);
+                }
                 list = response.body();
-                mailAdapter = new MailAdapter(list, MainActivity.this,prefix,domain);
+                mailAdapter = new MailAdapter(list, MainActivity.this, prefix, domain);
                 if (list.size() > 0) {
                     mailAdapter.notifyDataSetChanged();
                     binding.rv.setAdapter(mailAdapter);
@@ -80,9 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     binding.tv.setVisibility(View.GONE);
                     binding.iv.setVisibility(View.GONE);
                     binding.pb.setVisibility(View.GONE);
-                }
-                else if (list.size()==0)
-                {
+                } else if (list.size() == 0) {
                     binding.pb.setVisibility(View.GONE);
                     binding.tv.setText("Mail box is empty");
                 }
@@ -158,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         yes = alertbox.findViewById(R.id.btn_yes);
         no = alertbox.findViewById(R.id.btn_no);
         yes.setOnClickListener(view1 -> CloseApp());
-        no.setOnClickListener(view12 -> alertbox.dismiss());
+        no.setOnClickListener(view1 -> alertbox.dismiss());
     }
 
     @Override
@@ -173,5 +187,39 @@ public class MainActivity extends AppCompatActivity {
         int pid = android.os.Process.myPid();
         android.os.Process.killProcess(pid);
     }
+
+    public void ShowNotification(String msg, String from, Integer id) {
+        Intent resultIntent = new Intent(this, ViewMailActivity.class);
+        resultIntent.putExtra("prefix", prefix);
+        resultIntent.putExtra("domain", domain);
+        resultIntent.putExtra("id", id);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addNextIntentWithParentStack(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        String title = "New mail received from " + from;
+        String message = msg;
+        Intent activityIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this,
+                0, activityIntent, 0);
+        Bitmap picture = BitmapFactory.decodeResource(getResources(), R.drawable.noti_img);
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_icon)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setContentIntent(resultPendingIntent)
+                .setLargeIcon(picture)
+                .setStyle(new NotificationCompat.BigPictureStyle()
+                        .bigPicture(picture)
+                        .bigLargeIcon(null))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                .build();
+        notificationManager.notify(1, notification);
+    }
+
 
 }

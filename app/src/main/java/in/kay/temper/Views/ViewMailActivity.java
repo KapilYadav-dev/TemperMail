@@ -135,10 +135,11 @@ public class ViewMailActivity extends AppCompatActivity {
     }
 
     public void downloadFile(String string, String name) {
+        Toast.makeText(this, "Downloading ...", Toast.LENGTH_SHORT).show();
         File myDirectory = new File("/TemperMail/Attachments");
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(string));
         request.setDescription(name);
-        request.setTitle("Downloading");
+        request.setTitle(name);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             request.allowScanningByMediaScanner();
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
